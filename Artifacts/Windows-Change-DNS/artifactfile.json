@@ -1,0 +1,25 @@
+{
+	"$schema": "https://raw.githubusercontent.com/Azure/azure-devtestlab/master/schemas/2015-01-01/dtlArtifacts.json",
+    "title": "Change DNS Server",
+    "description": "Change the DNS server setting. Pass the name of the DC, it will be resolved in-VM and assigned as the DNS Server.",
+    "publisher": "Tim Taylor",
+    "tags": [
+        "Windows",
+        "Domain",
+        "AD",
+		"DNS"
+    ],
+	"iconUri": "",
+    "targetOsType": "Windows",
+    "parameters": {
+        "DCName": {
+            "type": "string",
+            "displayName": "Domain Controller Nme",
+            "description": "Name of the the DC, eg DC01",
+            "allowEmpty": false
+        }
+    },
+    "runCommand": {
+        "commandToExecute": "[concat('powershell.exe -ExecutionPolicy bypass -File changeDNS.ps1 -DCName ', parameters('DCName'))]"
+    }
+}
