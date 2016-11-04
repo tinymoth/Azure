@@ -8,7 +8,7 @@
         "Domain",
         "AD"
     ],
-	"iconUri": "https://raw.githubusercontent.com/tinymoth/Azure/master/Artifacts/Windows-Domain-Create/domainJoinArtifact.png",
+	"iconUri": "https://raw.githubusercontent.com/tinymoth/Azure/master/Artifacts/Windows-Domain-Create/domainCreateArtifact.png",
     "targetOsType": "Windows",
     "parameters": {
         "DomainName": {
