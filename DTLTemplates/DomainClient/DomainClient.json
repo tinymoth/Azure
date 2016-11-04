@@ -1,0 +1,86 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "newVMName": {
+      "type": "string"
+    },
+    "labName": {
+      "type": "string"
+    },
+    "size": {
+      "type": "string",
+      "defaultValue": "Standard_DS1_v2"
+    },
+    "userName": {
+      "type": "string"
+    },
+    "password": {
+      "type": "securestring"
+    },
+    "Create_web_shortcut.ShortcutName": {
+      "type": "string",
+      "defaultValue": "Azure Portal - Shortcut"
+    },
+    "Create_web_shortcut.ShortcutTargetPath": {
+      "type": "string",
+      "defaultValue": "http://portal.azure.com"
+    }
+  },
+  "variables": {
+    "labVirtualNetworkName": "[concat('Dtl', parameters('labName'))]",
+    "labSubnetName": "[concat(variables('labVirtualNetworkName'), 'Subnet')]",
+    "labVirtualNetworkId": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('labName'), variables('labVirtualNetworkName'))]",
+    "vmId": "[resourceId('Microsoft.DevTestLab/labs/virtualmachines', parameters('labName'), parameters('newVMName'))]",
+    "vmName": "[concat(parameters('labName'), '/', parameters('newVMName'))]"
+  },
+  
+  "resources": [
+    {
+      "apiVersion": "2016-05-15",
+      "type": "Microsoft.DevTestLab/labs/virtualmachines",
+      "name": "[variables('vmName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
+        "notes": "Windows Server 2012 R2 Datacenter",
+        "galleryImageReference": {
+          "offer": "WindowsServer",
+          "publisher": "MicrosoftWindowsServer",
+          "sku": "2012-R2-Datacenter",
+          "osType": "Windows",
+          "version": "latest"
+        },
+        "size": "[parameters('size')]",
+        "userName": "[parameters('userName')]",
+        "password": "[parameters('password')]",
+        "isAuthenticationWithSshKey": false,
+        "artifacts": [
+          {
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('labName'), 'public repo', 'windows-create-url-shortcut')]",
+            "parameters": [
+              {
+                "name": "ShortcutName",
+                "value": "[parameters('Create_web_shortcut.ShortcutName')]"
+              },
+              {
+                "name": "ShortcutTargetPath",
+                "value": "[parameters('Create_web_shortcut.ShortcutTargetPath')]"
+              }
+            ]
+          }
+        ],
+        "labSubnetName": "[variables('labSubnetName')]",
+        "disallowPublicIpAddress": true,
+        "storageType": "Premium",
+        "allowClaim": false
+      }
+    }
+  ],
+  "outputs": {
+        "vmRG": {
+        "value": "[split(reference(variables('vmId')).computeId, '/')[4]]",
+        "type" : "string"
+		}
+	}
+}
