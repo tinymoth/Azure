@@ -21,6 +21,9 @@ rem if 6.2
 rem  if server Windows8-RT-KB2799888-x64.msu
 rem  if client NOT SUPPORTED
 
+rem Added PowerShell PackageManagement installation 
+rem https://www.microsoft.com/en-us/download/details.aspx?id=51451
+
 
 reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OSVERSION=32BIT || set OSVERSION=64BIT
 
@@ -38,13 +41,16 @@ echo Target Type    : %TARGETTYPE%
 if %CURRENTVERSION%==6.1 (
  if %OSVERSION%==32BIT (
   call Windows6.1-KB2819745-x86.msu /quiet /norestart
+  call PackageManagement_x86.msi /quiet /norestart
  ) else (
   call Windows6.1-KB2819745-x64-MultiPkg.msu /quiet /norestart
+  call PackageManagement_x64.msi /quiet /norestart
  )
 ) else (
  if %CURRENTVERSION%==6.2 (
   if %TARGETTYPE%==SERVER (
    call Windows8-RT-KB2799888-x64.msu /quiet /norestart
+   call PackageManagement_x64.msi /quiet /norestart
   ) else (
    echo Not Supported on Windows 8. Please upgrade to 8.1
   )
