@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Azure/azure-devtestlab/master/schemas/2015-01-01/dtlArtifacts.json",
+    "title": "PackageManagement - PowerShellGet/OneGet for PS3/4",
+    "publisher": "Microsoft",
+    "description": "This preview release includes PackageManagement (previously known as OneGet) and PowerShellGet Windows PowerShell modules. The versions of these modules include the functionality of those that shipped with WMF 5.0. It installs exclusively on systems running Windows PowerShell 4 or Windows PowerShell 3 only. This preview will not install on any systems running Windows PowerShell 5 (including Windows 10) which already ship with these modules. See https://www.microsoft.com/en-us/download/details.aspx?id=51451. May cause a reboot",
+    "tags": [
+        "Windows",
+        "PowerShell"
+    ],
+    "iconUri": "https://raw.githubusercontent.com/tinymoth/Azure/master/Artifacts/Windows-PackageManagement/powershell.png",
+    "targetOsType": "Windows",
+    "runCommand": {
+        "commandToExecute": "install.cmd"
+    }
+}
