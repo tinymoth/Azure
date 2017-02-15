@@ -205,6 +205,10 @@
     "resourceGroup": {
       "type": "object",
       "value": "[resourceGroup()]"
+    },
+    "vNetId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')))]"
     }
   }
 }

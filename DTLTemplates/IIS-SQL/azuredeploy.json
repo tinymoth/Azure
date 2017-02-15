@@ -31,7 +31,7 @@
         "artifactsBaseUrl": "",
         "description": "URL to acquire other templates"
       },
-      "defaultValue": "//raw.githubusercontent.com/tinymoth/Azure/master/DTLTemplates/IIS-SQL"
+      "defaultValue": "https://raw.githubusercontent.com/tinymoth/Azure/master/DTLTemplates/IIS-SQL"
     }
   },
   "variables": {
@@ -48,7 +48,7 @@
     "sqlVmSize": "['Standard_DS3_v2']",
     "sqlSrvDBOsDiskName": "[concat('CONTOSO', 'DBSrvOS')]",
     "sqlSrvDBDataDiskName": "[concat('CONTOSO', 'DBSrvData')]",
-    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "hiddenvnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
     "sqlSrvDBNicName": "[concat(variables('sqlSrvDBName'), 'Nic')]",
     "sqlSvrDBSubnetRef": "[concat(variables('vnetId'), '/subnets/', 'DBSubnetName')]",
     "sqlPublicIP": "[concat('fab', 'SqlPip')]",
@@ -147,7 +147,7 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "[variables('apiVersion')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[reference('SettingUpNetwork').outputs.vNetId]"
       ],
       "tags": {
         "displayName": "SQLSrvDBNic"
@@ -340,7 +340,7 @@
         "count": "[variables('webSrvNumbOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[reference('SettingUpNetwork').outputs.vNetId]",
         "[concat('Microsoft.Network/loadBalancers/', variables('webLbName'))]"
       ],
       "tags": {
