@@ -21,7 +21,7 @@
     }
   },
   "runCommand": {
-    "commandToExecute": "" 
+    "commandToExecute": "[concat('powershell.exe -ExecutionPolicy bypass -File doNothing.ps1 -inputVariable ', parameters('inputVariable'))]"
   },
   "outputs": {
     "theString": {
