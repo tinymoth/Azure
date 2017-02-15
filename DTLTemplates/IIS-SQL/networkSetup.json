@@ -206,9 +206,17 @@
       "type": "object",
       "value": "[resourceGroup()]"
     },
+    "deployment": {
+      "type": "object",
+      "value": "[deployment()]"
+    },
+    "subscription": {
+      "type": "object",
+      "value": "[subscription()]"
+    },
     "vNetId": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')))]"
+      "value": "[reference(concat('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')))]"
     }
   }
 }
