@@ -8,23 +8,26 @@
   ],
   "iconUri": "",
   "targetOsType": "Windows",
-  "parameters": { 
-      "inputVariable": {
-          "type": "string",
-          "displayName": "A String",
-          "description": "A string variable"
-      },
-     "secretVariable": {
-          "type": "securestring",
-          "displayName": "A secret String",
-          "description": "This string is a secret"
-      }
-   },
-    "outputs": {
-      "theString": {
-        "type": "string",
-        "value" :  "[variables(inputVariable)]"
-      }
+  "parameters": {
+    "inputVariable": {
+      "type": "string",
+      "displayName": "A String",
+      "description": "A string variable"
+    },
+    "secretVariable": {
+      "type": "securestring",
+      "displayName": "A secret String",
+      "description": "This string is a secret"
+    }
+  },
+  "runCommand": {
+    "commandToExecute": "" 
+  },
+  "outputs": {
+    "theString": {
+      "type": "string",
+      "value" :  "[variables(inputVariable)]"
     }
   }
 }
+
