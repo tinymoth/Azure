@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "locatione": {
+    "location": {
       "type": "string",
       "metadata": {
         "description": "Azure location"
@@ -54,7 +54,7 @@
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('feNSGName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters(location)]",
       "tags": {
         "displayName": "FrontEndNSG"
       },
@@ -95,7 +95,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "[variables('apiVersion')]",
       "name": "[parameters('dbNSGName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters(location)]",
       "tags": {
         "displayName": "BackEndNSG"
       },
@@ -164,7 +164,7 @@
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('virtualNetworkName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters(location)]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('feNSGName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('dbNSGName'))]"
