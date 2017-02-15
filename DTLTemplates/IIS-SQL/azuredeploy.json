@@ -48,7 +48,7 @@
     "sqlVmSize": "['Standard_DS3_v2']",
     "sqlSrvDBOsDiskName": "[concat('CONTOSO', 'DBSrvOS')]",
     "sqlSrvDBDataDiskName": "[concat('CONTOSO', 'DBSrvData')]",
-    "hiddenvnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
     "sqlSrvDBNicName": "[concat(variables('sqlSrvDBName'), 'Nic')]",
     "sqlSvrDBSubnetRef": "[concat(variables('vnetId'), '/subnets/', 'DBSubnetName')]",
     "sqlPublicIP": "[concat('fab', 'SqlPip')]",
