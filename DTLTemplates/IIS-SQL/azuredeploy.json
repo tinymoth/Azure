@@ -48,10 +48,9 @@
     "sqlVmSize": "['Standard_DS3_v2']",
     "sqlSrvDBOsDiskName": "[concat('CONTOSO', 'DBSrvOS')]",
     "sqlSrvDBDataDiskName": "[concat('CONTOSO', 'DBSrvData')]",
-    "vnetId": "[reference('SettingUpNetwork').outputs.vNetId]",
-    "somethingelse": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "avNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
     "sqlSrvDBNicName": "[concat(variables('sqlSrvDBName'), 'Nic')]",
-    "sqlSvrDBSubnetRef": "[concat(variables('vnetId'), '/subnets/', 'DBSubnetName')]",
+    "asqlSvrDBSubnetRef": "[concat(variables('avnetId'), '/subnets/', 'DBSubnetName')]",
     "sqlPublicIP": "[concat('fab', 'SqlPip')]",
     "sqlPublicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses', variables('sqlPublicIP'))]",
     "sqlImagePublisher": "MicrosoftSQLServer",
@@ -61,7 +60,7 @@
     "webSrvVMSize": "['Standard_DS2_v2']",
     "webSrvOSDiks": "[concat('fab', 'WebSrvOS')]",
     "webSrvNicName": "[concat(variables('webSrvName'), 'Nic')]",
-    "webSrvSubnetRef": "[concat(variables('vnetId'), '/subnets/', 'FESubnetName')]",
+    "awebSrvSubnetRef": "[concat(variables('avnetId'), '/subnets/', 'FESubnetName')]",
     "webSrvPublicIP": "[concat('fab', 'websrvpip')]",
     "webSrvAvailabilitySetName": "[concat('fab', 'webSrvAS')]",
     "webSrvNumbOfInstances": "[parameters('numberOfWebSrvs')]",
@@ -147,9 +146,6 @@
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[resourceGroup().location]",
       "apiVersion": "[variables('apiVersion')]",
-      "dependsOn": [
-        "[reference('SettingUpNetwork').outputs.vNetId]"
-      ],
       "tags": {
         "displayName": "SQLSrvDBNic"
       },
@@ -160,7 +156,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('sqlSvrDBSubnetRef')]"
+                "id": "[concat(reference('SettingUpNetwork').outputs.vNetId, '/subnets/', 'DBSubnetName')]"
               },
               "publicIPAddress": {
                 "id": "[variables('sqlPublicIPRef')]"
@@ -341,7 +337,6 @@
         "count": "[variables('webSrvNumbOfInstances')]"
       },
       "dependsOn": [
-        "[reference('SettingUpNetwork').outputs.vNetId]",
         "[concat('Microsoft.Network/loadBalancers/', variables('webLbName'))]"
       ],
       "tags": {
@@ -354,7 +349,8 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('webSrvSubnetRef')]"
+                "awebSrvSubnetRef": "",
+                "id": "[concat(reference('SettingUpNetwork').outputs.vNetId, '/subnets/', 'FESubnetName')]"
               },
               "loadBalancerBackendAddressPools": [
                 {
