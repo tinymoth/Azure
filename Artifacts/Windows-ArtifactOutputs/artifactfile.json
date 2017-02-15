@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-devtestlab/master/schemas/2015-01-01/dtlArtifacts.json",
+  "title": "Empty Artifact",
+  "description": "Test template Outputs",
+  "tags": [
+    "Test",
+    "Template"
+  ],
+  "iconUri": "",
+  "targetOsType": "Windows",
+  "parameters": { 
+      "inputVariable": {
+          "type": "string",
+          "displayName": "A String",
+          "description": "A string variable"
+      },
+     "secretVariable": {
+          "type": "securestring",
+          "displayName": "A secret String",
+          "description": "This string is a secret"
+      }
+   },
+    "outputs": {
+      "theString": {
+        "type": "string",
+        "value" :  "[variables(inputVariable)]"
+      }
+    }
+  }
+}
