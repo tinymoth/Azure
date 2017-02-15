@@ -54,7 +54,7 @@
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('feNSGName')]",
-      "location": "[parameters(location)]",
+      "location": "[parameters('location')]",
       "tags": {
         "displayName": "FrontEndNSG"
       },
@@ -95,7 +95,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "[variables('apiVersion')]",
       "name": "[parameters('dbNSGName')]",
-      "location": "[parameters(location)]",
+      "location": "[parameters('location')]",
       "tags": {
         "displayName": "BackEndNSG"
       },
@@ -164,7 +164,7 @@
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('virtualNetworkName')]",
-      "location": "[parameters(location)]",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('feNSGName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('dbNSGName'))]"
