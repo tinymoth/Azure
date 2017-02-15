@@ -47,7 +47,7 @@
   },
   "variables": {
     "apiVersion": "2015-06-15",
-    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+    "vnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
   },
   "resources": [
     {
@@ -216,7 +216,7 @@
     },
     "vNetId": {
       "type": "string",
-      "value": "[reference(variables('vnetId'))]"
+      "value": "[reference(variables('vnetResourceId'))]"
     }
   }
 }
