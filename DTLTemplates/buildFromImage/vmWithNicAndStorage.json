@@ -1,0 +1,141 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "description": "VM name"
+      }
+    },
+    "username": {
+      "type": "string",
+      "metadata": {
+        "description": "VM local administrator username"
+      }
+    },
+    "password": {
+      "type": "securestring",
+      "metadata": {
+        "description": "VM local administrator password"
+      }
+    },
+    "vNet": {
+      "type": "string",
+      "metadata": {
+        "description": "vNet name"
+      }
+    },
+    "subNet": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet Name"
+      }
+    }
+  },
+  "variables": {
+    "apiVersion": "2015-06-15",
+    "orgName": "timbot",
+    "storageName": "[concat(variables('orgName'), 'stg', uniqueString(resourceGroup().id))]",
+    "vhdContainer": "vhds",
+    "sqlSrvDBName": "[parameters('vmName')]",
+    "sqlSrvDBNicName": "[concat(parameters('vmName'), 'Nic')]",
+    "virtualNetworkName": "[parameters('vNet')]",
+    "vNetId": "[resourceId('rgOne', 'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "DBSubnetName": "[parameters('subNet')]",
+    "sqlSvrDBSubnetRef": "[concat(variables('vnetId'), '/subnets/', variables('DBSubnetName'))]",
+    "sqlVmSize": "Standard_F1s",
+    "sqlImagePublisher": "MicrosoftSQLServer",
+    "sqlImageOffer": "SQL2014-WS2012R2",
+    "sqlImageSku": "Standard",
+    "sqlSrvDBOsDiskName": "[concat(variables('orgname'), 'DBSrvOS')]"
+
+
+  },
+  "resources": [
+    {
+      "name": "[variables('storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "[concat('StorageForEnv', parameters('vmName'))]"
+      },
+      "properties": {
+        "accountType": "Premium_LRS"
+      }
+    },
+    {
+      "name": "[variables('sqlSrvDBNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "[variables('apiVersion')]",
+      "tags": {
+        "displayName": "[concat(parameters('vmName'),'-Nic')]"
+      },
+      "dependsOn": [
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('sqlSvrDBSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('vmName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('sqlSrvDBNicName'))]"
+      ],
+      "tags": {
+        "displayName": "[concat('DTL-VM-', parameters('vmName'))]"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('sqlVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('sqlSrvDBName')]",
+          "adminUsername": "[parameters('username')]",
+          "adminPassword": "[parameters('password')]"
+        },
+        "storageProfile": {
+
+          "osDisk": {
+            "name": "[concat('myOSDisk')]",
+            "osType": "Windows",
+            "vhd": {
+              "uri": "[concat('https://timbotstg2htjp2eac2k72.blob.core.windows.net/premvhds/','AZUDC01_fromimage2.vhd')]"
+            },
+            "image": {
+              "uri": "https://dptimlab4115.blob.core.windows.net/mastervhds/AZUDC01_42ddb92f-865c-48a9-.vhd"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+
+        },
+
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('sqlSrvDBNicName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
