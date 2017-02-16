@@ -159,7 +159,7 @@
         "displayName": "SQLSrvDBNic"
       },
       "dependsOn": [
-        "[reference('SettingUpNetwork').outputs.DBSubnetId]",
+        "[concat('Microsoft.Resources/deployments/', 'SettingUpNetwork')]",
       ],
       "properties": {
         "ipConfigurations": [
@@ -350,7 +350,7 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Network/loadBalancers/', variables('webLbName'))]",
-        "[reference('SettingUpNetwork').outputs.FESubnetId]"
+        "[concat('Microsoft.Resources/deployments/', 'SettingUpNetwork')]"
       ],
       "tags": {
         "displayName": "WebSrvNic"
