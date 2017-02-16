@@ -8,30 +8,6 @@
         "description": "Azure location"
       }
     },
-    "feNsgName": {
-      "type": "string",
-      "metadata": {
-        "description": "Frontend IIS NSG Name"
-      }
-    },
-    "dbNsgName": {
-      "type": "string",
-      "metadata": {
-        "description": "Database NSG Name"
-      }
-    },
-    "feSubnetPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Frontend Subnet Prefix"
-      }
-    },
-    "dbSubnetPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Database Subnet Prefix"
-      }
-    },
     "virtualNetworkName": {
       "type": "string",
       "metadata": {
@@ -43,11 +19,49 @@
       "metadata": {
         "description": "Virtual Network Address Prefix"
       }
+    },
+    "FESubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Frontend Subnet Name"
+      }
+    },
+    "feSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Frontend Subnet Prefix"
+      }
+    },
+    "feNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Frontend IIS NSG Name"
+      }
+    },
+    "DBSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Database Subnet Name"
+      }
+    },
+    "dbSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Database Subnet Prefix"
+      }
+    },
+    "dbNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Database NSG Name"
+      }
     }
   },
   "variables": {
     "apiVersion": "2015-06-15",
-    "vnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+    "vnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "feSubnetResourceId": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('FESubnetName'))]",
+    "dbSubnetResourceId": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('DBSubnetName'))]"
   },
   "resources": [
     {
@@ -180,7 +194,7 @@
         },
         "subnets": [
           {
-            "name": "FESubnetName",
+            "name": "[parameters('FESubnetName')]",
             "properties": {
               "addressPrefix": "[parameters('feSubnetPrefix')]",
               "networkSecurityGroup": {
@@ -189,7 +203,7 @@
             }
           },
           {
-            "name": "DBSubnetName",
+            "name": "[parameters('DBSubnetName')]",
             "properties": {
               "addressPrefix": "[parameters('dbSubnetPrefix')]",
               "networkSecurityGroup": {
@@ -217,6 +231,14 @@
     "vNetId": {
       "type": "string",
       "value": "[variables('vnetResourceId')]"
+    },
+    "FESubnetId": {
+      "type": "string",
+      "value": "[variables('feSubnetResourceId')]"
+    },
+    "DBSubnetId": {
+      "type": "string",
+      "value": "[variables('dbSubnetResourceId')]"
     }
   }
 }

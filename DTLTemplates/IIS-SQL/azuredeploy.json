@@ -38,16 +38,19 @@
     "apiVersion": "2015-06-15",
     "storageName": "[concat('fab', 'stg', uniqueString(resourceGroup().id))]",
     "vhdContainer": "vhds",
-    "virtualNetworkName": "[concat('CONTOSO', 'Vnet')]",
+    "orgName": "CONTOSO",
+    "virtualNetworkName": "[concat(variables('orgname'), 'Vnet')]",
     "addressPrefix": "10.0.0.0/16",
     "feSubnetPrefix": "10.0.0.0/24",
     "dbSubnetPrefix": "10.0.2.0/24",
+    "FESubnetName": "feSubnetName",
+    "DBSubnetName": "dbSubnetName",
     "feNSGName": "feNsg",
     "dbNSGName": "dbNsg",
     "sqlSrvDBName": "[concat('fab', 'sqlSrv14')]",
-    "sqlVmSize": "['Standard_DS3_v2']",
-    "sqlSrvDBOsDiskName": "[concat('CONTOSO', 'DBSrvOS')]",
-    "sqlSrvDBDataDiskName": "[concat('CONTOSO', 'DBSrvData')]",
+    "sqlVmSize": "Standard_DS3_v2",
+    "sqlSrvDBOsDiskName": "[concat(variables('orgname'), 'DBSrvOS')]",
+    "sqlSrvDBDataDiskName": "[concat(variables('orgname'), 'DBSrvData')]",
     "avNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
     "sqlSrvDBNicName": "[concat(variables('sqlSrvDBName'), 'Nic')]",
     "asqlSvrDBSubnetRef": "[concat(variables('avnetId'), '/subnets/', 'DBSubnetName')]",
@@ -57,7 +60,7 @@
     "sqlImageOffer": "SQL2014-WS2012R2",
     "sqlImageSku": "Standard",
     "webSrvName": "[concat('fab', 'webSrv')]",
-    "webSrvVMSize": "['Standard_DS2_v2']",
+    "webSrvVMSize": "Standard_DS2_v2",
     "webSrvOSDiks": "[concat('fab', 'WebSrvOS')]",
     "webSrvNicName": "[concat(variables('webSrvName'), 'Nic')]",
     "awebSrvSubnetRef": "[concat(variables('avnetId'), '/subnets/', 'FESubnetName')]",
@@ -100,8 +103,14 @@
           "dbNsgName": {
             "value": "[variables('dbNSGName')]"
           },
+          "feSubnetName": {
+            "value": "[variables('feSubnetName')]"
+          },
           "feSubnetPrefix": {
             "value": "[variables('feSubnetPrefix')]"
+          },
+          "dbSubnetName": {
+            "value": "[variables('dbSubnetName')]"
           },
           "dbSubnetPrefix": {
             "value": "[variables('dbSubnetPrefix')]"
@@ -156,7 +165,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[concat(reference('SettingUpNetwork').outputs.vNetId, '/subnets/', 'DBSubnetName')]"
+                "id": "[reference('SettingUpNetwork').outputs.DBSubnetId]"
               },
               "publicIPAddress": {
                 "id": "[variables('sqlPublicIPRef')]"
@@ -167,7 +176,7 @@
       }
     },
     {
-      "name": "[concat('CONTOSO', 'sqlSrv14')]",
+      "name": "[concat(variables('orgname'), 'sqlSrv14')]",
       "type": "Microsoft.Compute/virtualMachines",
       "location": "[resourceGroup().location]",
       "apiVersion": "[variables('apiVersion')]",
@@ -350,7 +359,7 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "awebSrvSubnetRef": "",
-                "id": "[concat(reference('SettingUpNetwork').outputs.vNetId, '/subnets/', 'FESubnetName')]"
+                "id": "[reference('SettingUpNetwork').outputs.FESubnetId]"
               },
               "loadBalancerBackendAddressPools": [
                 {
