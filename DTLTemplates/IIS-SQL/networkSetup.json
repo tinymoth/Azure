@@ -216,7 +216,7 @@
     },
     "vNetId": {
       "type": "string",
-      "value": "[reference(variables('vnetResourceId'))]"
+      "value": "[variables('vnetResourceId')]"
     }
   }
 }
