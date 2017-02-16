@@ -1,0 +1,6 @@
+{
+  "itemDisplayName": "Build lab from images",
+  "description": "Create a bunch of servers from images",
+  "summary": "Using images, build some servers",
+  "githubUsername": "tinymoth"
+}

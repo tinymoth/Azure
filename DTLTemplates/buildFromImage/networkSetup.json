@@ -1,0 +1,248 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure location"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Name"
+      }
+    },
+    "addressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Address Prefix"
+      }
+    },
+    "FESubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Frontend Subnet Name"
+      }
+    },
+    "feSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Frontend Subnet Prefix"
+      }
+    },
+    "feNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Frontend IIS NSG Name"
+      }
+    },
+    "DBSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Database Subnet Name"
+      }
+    },
+    "dbSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Database Subnet Prefix"
+      }
+    },
+    "dbNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Database NSG Name"
+      }
+    }
+  },
+  "variables": {
+    "apiVersion": "2015-06-15",
+    "vnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "feSubnetResourceId": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('FESubnetName'))]",
+    "dbSubnetResourceId": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('DBSubnetName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('feNSGName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "FrontEndNSG"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "rdp_rule",
+            "properties": {
+              "description": "Allow RDP",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "web_rule",
+            "properties": {
+              "description": "Allow WEB",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "[parameters('dbNSGName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "BackEndNSG"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow_FE",
+            "properties": {
+              "description": "Allow FE Subnet",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "1433",
+              "sourceAddressPrefix": "[parameters('feSubnetPrefix')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "rdp_rule",
+            "properties": {
+              "description": "Allow RDP",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Block_FE",
+            "properties": {
+              "description": "Block App Subnet",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "[parameters('feSubnetPrefix')]",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 121,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Block_Internet",
+            "properties": {
+              "description": "Block Internet",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "Internet",
+              "access": "Deny",
+              "priority": 200,
+              "direction": "Outbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('virtualNetworkName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('feNSGName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('dbNSGName'))]"
+      ],
+      "tags": {
+        "displayName": "VirtualNetwork"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('FESubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('feSubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('feNSGName'))]"
+              }
+            }
+          },
+          {
+            "name": "[parameters('DBSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('dbSubnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dbNSGName'))]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "resourceGroup": {
+      "type": "object",
+      "value": "[resourceGroup()]"
+    },
+    "deployment": {
+      "type": "object",
+      "value": "[deployment()]"
+    },
+    "subscription": {
+      "type": "object",
+      "value": "[subscription()]"
+    },
+    "vNetId": {
+      "type": "string",
+      "value": "[variables('vnetResourceId')]"
+    },
+    "avNet": {
+      "type": "object",
+      "value": "[reference(parameters('virtualNetworkName'))]"
+    },
+    "FESubnetId": {
+      "type": "string",
+      "value": "[reference(parameters('virtualNetworkName')).subnets[0].id]"
+    },
+    "DBSubnetId": {
+      "type": "string",
+      "value": "[reference(parameters('virtualNetworkName')).subnets[1].id]"
+    }
+  }
+}
