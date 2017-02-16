@@ -358,7 +358,6 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "awebSrvSubnetRef": "",
                 "id": "[reference('SettingUpNetwork').outputs.FESubnetId]"
               },
               "loadBalancerBackendAddressPools": [

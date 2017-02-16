@@ -232,13 +232,17 @@
       "type": "string",
       "value": "[variables('vnetResourceId')]"
     },
+    "avNet": {
+      "type": "object",
+      "value": "[reference(parameters('virtualNetworkName'))]"
+    },
     "FESubnetId": {
       "type": "string",
-      "value": "[variables('feSubnetResourceId')]"
+      "value": "[reference(parameters('virtualNetworkName')).subnets[0].id]"
     },
     "DBSubnetId": {
       "type": "string",
-      "value": "[variables('dbSubnetResourceId')]"
+      "value": "[reference(parameters('virtualNetworkName')).subnets[1].id]"
     }
   }
 }
