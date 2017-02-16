@@ -158,6 +158,9 @@
       "tags": {
         "displayName": "SQLSrvDBNic"
       },
+      "dependsOn": [
+        "[reference('SettingUpNetwork').outputs.DBSubnetId]",
+      ],
       "properties": {
         "ipConfigurations": [
           {
@@ -346,7 +349,8 @@
         "count": "[variables('webSrvNumbOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('webLbName'))]"
+        "[concat('Microsoft.Network/loadBalancers/', variables('webLbName'))]",
+        "[reference('SettingUpNetwork').outputs.FESubnetId]"
       ],
       "tags": {
         "displayName": "WebSrvNic"
